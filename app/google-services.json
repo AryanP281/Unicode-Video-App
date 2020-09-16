@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "363175139683",
+    "firebase_url": "https://unicodevideoapp.firebaseio.com",
+    "project_id": "unicodevideoapp",
+    "storage_bucket": "unicodevideoapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363175139683:android:da4b9abfb8865eed81db56",
+        "android_client_info": {
+          "package_name": "com.example.unicodevideoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363175139683-r99juidb0j63f7n2rercap1t194o0hkf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.unicodevideoapp",
+            "certificate_hash": "9f621953291c50066f836ade840a8a0f2fef52cd"
+          }
+        },
+        {
+          "client_id": "363175139683-2e5e9o0kmq4unqarvs4o6tpasv3j6b8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXcs6lcK8DRDkiIB7zZCdWcvqmtkB442M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363175139683-2e5e9o0kmq4unqarvs4o6tpasv3j6b8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="credential_screen_bg_gradient_start" format="color"/>
+    <attr name="credential_screen_bg_gradient_end" format="color" />
+</resources>

@@ -19,7 +19,9 @@
         android:id="@+id/login_email"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/login_title"
+        android:layout_marginTop="200dp"
         android:hint="@string/email_hint"
         android:background="@drawable/round_textbox"
         android:padding="8dp"
@@ -67,9 +69,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_reset_password"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_centerHorizontal="true"
         android:text="@string/login_btn_text"
+        />
+
+    <Button
+        android:id="@+id/login_via_google_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/login_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/login_via_google_btn_text"
+        />
+
+    <Button
+        android:id="@+id/login_via_phone_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/login_via_google_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/login_via_phone_btn_text"
         />
 
     <TextView

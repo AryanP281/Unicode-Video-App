@@ -1,5 +1,7 @@
 package com.example.unicodevideoapp
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -9,9 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
 import java.lang.Exception
 
 class LoginFragment : Fragment()
@@ -19,6 +25,8 @@ class LoginFragment : Fragment()
 
     companion object
     {
+        private val GOOGLE_SIGNIN_RC = 150
+
         @JvmStatic
         fun newInstance() : LoginFragment
         {
@@ -52,7 +60,46 @@ class LoginFragment : Fragment()
             resetPassword()
         }
 
+        //Setting click listener to sign in using google
+        fragmentView.findViewById<Button>(R.id.login_via_google_btn).setOnClickListener {view : View? ->
+            loginViaGoogle()
+        }
+
+        //Setting click listener to sign in using phone
+        fragmentView.findViewById<Button>(R.id.login_via_phone_btn).setOnClickListener {view : View? ->
+            //Starting the activity
+            val intent : Intent = Intent(activity, PhoneAuthenticationActivity::class.java)
+            startActivity(intent)
+        }
+
         return fragmentView
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        //Handling Google SignIn Activity result
+        if(requestCode == GOOGLE_SIGNIN_RC)
+        {
+            //Checking if activity was successful
+            if(resultCode == Activity.RESULT_OK)
+            {
+                val task : Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try
+                {
+                    //Getting the google account
+                    val account : GoogleSignInAccount = task.getResult(ApiException::class.java)!!
+                    firebaseAuthUsingGoogle(account.idToken!!)
+                }
+                catch (exe : ApiException)
+                {
+                    Toast.makeText(activity, "Google Sign In Failed - ${exe.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+            else
+                Toast.makeText(activity, "Google Sign In Failed", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loginUser()
@@ -189,5 +236,45 @@ class LoginFragment : Fragment()
             }
         }
 
+    }
+
+    private fun loginViaGoogle()
+    {
+        /**Logs the user in using their google account**/
+
+        //Initializing the google sign in options
+        val gso : GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).let {
+            it.requestIdToken(getString(R.string.default_web_client_id))
+            it.requestEmail()
+            it.build()
+        }
+
+        //Creating a google sign in client
+        val googleSignInClient : GoogleSignInClient = GoogleSignIn.getClient(activity as Context, gso)
+
+        //Signing in
+        startActivityForResult(googleSignInClient.signInIntent, GOOGLE_SIGNIN_RC)
+    }
+
+    private fun firebaseAuthUsingGoogle(accountId : String)
+    {
+        /**Logs into firebase using the google account id**/
+
+        //Getting the login credential from the google account id
+        val credential : AuthCredential = GoogleAuthProvider.getCredential(accountId, null)
+
+        //Logging into firebase
+        firebaseAuth.signInWithCredential(credential).let {
+            it.addOnCompleteListener { task : Task<AuthResult> ->
+                if(task.isSuccessful)
+                {
+                    //Switching to home activity
+                    val intent : Intent = Intent(activity, HomeActivity::class.java)
+                    startActivity(intent)
+                }
+                else
+                    Toast.makeText(activity, "Login Failed - ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

@@ -10,6 +10,10 @@
     <string name="registration_login_page_dir_text">Already have an account ?\nSwipe left to Log In</string>
     <string name="login_registration_page_dir_text">Don\'t have an account ?\nSwipe right to Register</string>
     <string name="reset_password_btn_text">Click to reset password</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_via_google_btn_text">Sign In Using Google</string>
+    <string name="login_via_phone_btn_text">Sign In Using Phone</string>
+    <string name="phoneauth_phone_num_hint">Enter Phone Number</string>
+    <string name="phoneauth_verification_code_hint">Enter Verification Code</string>
+    <string name="phoneauth_submit_btn_txt1">Login</string>
+    <string name="phoneauth_submit_btn_txt2">Verify</string>
 </resources>

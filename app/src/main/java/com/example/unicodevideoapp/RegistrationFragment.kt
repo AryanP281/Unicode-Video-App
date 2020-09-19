@@ -13,9 +13,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.*
+import java.lang.Exception
 
 
 class RegistrationFragment : Fragment()
@@ -90,7 +89,7 @@ class RegistrationFragment : Fragment()
                         } //Updating username in Firebase
                     }
                     else
-                        Toast.makeText(activity, "Registration failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, "Registration failed - ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }

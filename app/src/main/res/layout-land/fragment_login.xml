@@ -80,10 +80,31 @@
             android:text="@string/login_btn_text"
             />
 
-        <TextView
+        <Button
+            android:id="@+id/login_via_google_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/login_btn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/login_via_google_btn_text"
+            />
+
+        <Button
+            android:id="@+id/login_via_phone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_via_google_btn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/login_via_phone_btn_text"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_via_phone_btn"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
             android:text="@string/login_registration_page_dir_text"

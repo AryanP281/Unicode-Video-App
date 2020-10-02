@@ -2,4 +2,6 @@
 <resources>
     <attr name="credential_screen_bg_gradient_start" format="color"/>
     <attr name="credential_screen_bg_gradient_end" format="color" />
+    <attr name="home_screen_bg_gradient_start" format="color"/>
+    <attr name="home_screen_bg_gradient_end" format="color"/>
 </resources>

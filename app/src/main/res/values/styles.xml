@@ -18,4 +18,11 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <style name="HomeActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="home_screen_bg_gradient_start">@color/home_bg_gradient_start</item>
+        <item name="home_screen_bg_gradient_end">@color/home_bg_gradient_end</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@color/hint_color</item>
+    </style>
+
 </resources>

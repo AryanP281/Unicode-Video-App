@@ -16,4 +16,8 @@
     <string name="phoneauth_verification_code_hint">Enter Verification Code</string>
     <string name="phoneauth_submit_btn_txt1">Login</string>
     <string name="phoneauth_submit_btn_txt2">Verify</string>
+    <string name="search_bar_hint">Search video</string>
+    <string name="logout_btn_txt">Logout</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

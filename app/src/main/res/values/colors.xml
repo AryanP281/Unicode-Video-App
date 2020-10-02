@@ -8,4 +8,11 @@
     <color name="auth_colorPrimary">#336699</color>
     <color name="auth_bg_gradient_start">#141E30</color>
     <color name="auth_bg_gradient_end">#243B55</color>
+    
+    <!--Home Screen Theme-->
+    <color name="home_bg_gradient_start">#0575E6</color>
+    <color name="home_bg_gradient_end">#021B79</color>
+    <color name="hint_color">#d9d9d9</color>
+    <color name="video_card_bg">#232526</color>
+
 </resources>

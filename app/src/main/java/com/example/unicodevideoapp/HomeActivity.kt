@@ -7,53 +7,63 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.marginLeft
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.PagerTabStrip
+import androidx.viewpager.widget.ViewPager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 
 class HomeActivity : AppCompatActivity()
 {
-    private lateinit var firebaseAuth : FirebaseAuth //The firebase auth object
+
+    val viewPagerAdapter : FragmentPagerAdapter = object:FragmentPagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+    {
+        override fun getCount(): Int
+        {
+            return 3
+        }
+
+        override fun getItem(position: Int): Fragment
+        {
+            var fragment : Fragment? = null
+            when(position)
+            {
+                0 -> fragment = SearchFragment()
+                1 -> fragment = VideoFragment()
+                2 -> fragment = UserProfileFragment()
+            }
+
+            return fragment!!
+        }
+
+        override fun getPageTitle(position: Int): CharSequence?
+        {
+            var title : String? = null
+            when(position)
+            {
+                0 -> title = "Search"
+                1 -> title = "Watch"
+                2 -> title = FirebaseAuth.getInstance().currentUser!!.displayName
+            }
+
+            return title
+        }
+
+    } //The fragment adapter for the view pager
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        //Initializing the firebase auth object
-        firebaseAuth = FirebaseAuth.getInstance()
+        //Initalizing pager title strip
+        val pagerTab : PagerTabStrip = findViewById(R.id.home_pager_tab)
 
-        //Displaying logged user info
-        displayUserInfo()
-
-        //Adding listener for log out button
-        findViewById<Button>(R.id.logout_btn).setOnClickListener{view : View ->
-            firebaseAuth.signOut()
-
-            //Switching to login activity
-            val intent : Intent = Intent(this, AuthenticationActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
+        //Initializing the view pager
+        findViewById<ViewPager>(R.id.home_view_pager).adapter = viewPagerAdapter //Setting the view pager adapter
     }
 
-    private fun displayUserInfo()
-    {
-        /**Displays the currently logged in user's info**/
-
-        val currentUser : FirebaseUser? = firebaseAuth.currentUser
-        if(currentUser != null)
-        {
-            findViewById<TextView>(R.id.user_email).text = currentUser.email
-            findViewById<TextView>(R.id.user_id).text = currentUser.uid
-            findViewById<TextView>(R.id.user_display_name).text = currentUser.displayName
-        }
-        else
-        {
-            //Switching to login activity
-            val intent : Intent = Intent(this, AuthenticationActivity::class.java)
-            startActivity(intent)
-        }
-
-    }
 }

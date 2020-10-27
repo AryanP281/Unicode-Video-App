@@ -33,7 +33,7 @@ class SearchFragment : Fragment()
     companion object
     {
         private val YOUTUBE_API_BASE_URL : String = "https://www.googleapis.com/youtube/v3/"
-        private val YOUTUBE_API_KEY : String = "AIzaSyDOIZwbhHAUtyXHHqZuHAFI5YlGB5_E8Q4"
+        private val YOUTUBE_API_KEY : String = "API-KEY"
 
         fun newInstance() : SearchFragment
         {

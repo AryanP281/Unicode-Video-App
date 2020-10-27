@@ -18,6 +18,10 @@
     <string name="phoneauth_submit_btn_txt2">Verify</string>
     <string name="search_bar_hint">Search video</string>
     <string name="logout_btn_txt">Logout</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="h_bnav_search_title">Search</string>
+    <string name="h_bnav_video_title">Watch</string>
+    <string name="h_bnav_profile_title">Profile</string>
+    <string name="storage_perm_rat_title">External Storage Write Permission</string>
+    <string name="storage_perm_rat_msg">The app requires permission to save downloaded video</string>
+    <string name="accept_perm_btn_msg">Accept</string>
 </resources>

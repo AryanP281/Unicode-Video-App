@@ -2,32 +2,38 @@ package com.example.unicodevideoapp
 
 class VideoItem
 {
+    class VideoItemId
+    {
+        lateinit var videoId : String
+    }
+
     class VideoItemSnippet
     {
         class VideoThumbnail
         {
             class ThumbnailRes
             {
-                lateinit var url : String
-                var width : Int = 0
-                var height : Int = 0
+                lateinit var url: String
+                var width: Int = 0
+                var height: Int = 0
             }
 
-            lateinit var default : ThumbnailRes
-            lateinit var medium : ThumbnailRes
-            lateinit var high : ThumbnailRes
+            lateinit var default: ThumbnailRes
+            lateinit var medium: ThumbnailRes
+            lateinit var high: ThumbnailRes
         }
 
-        lateinit var publishedAt : String
-        lateinit var channelId : String
-        lateinit var title : String
-        lateinit var description : String
-        lateinit var thumbnails : VideoThumbnail
-        lateinit var channelTitle : String
-        lateinit var liveBroadcastContent : String
-        lateinit var publishTime : String
+        lateinit var publishedAt: String
+        lateinit var channelId: String
+        lateinit var title: String
+        lateinit var description: String
+        lateinit var thumbnails: VideoThumbnail
+        lateinit var channelTitle: String
+        lateinit var liveBroadcastContent: String
+        lateinit var publishTime: String
     }
 
+    lateinit var id : VideoItemId
     lateinit var snippet : VideoItemSnippet
 
 }

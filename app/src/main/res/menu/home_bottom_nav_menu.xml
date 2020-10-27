@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/h_bnav_search"
+        android:title="@string/h_bnav_search_title"
+        android:icon="@drawable/h_bnav_search_icon"
+        />
+
+    <item
+        android:id="@+id/h_bnav_watch"
+        android:title="@string/h_bnav_video_title"
+        android:icon="@drawable/h_bnav_video_icon"
+        />
+
+    <item
+        android:id="@+id/h_bnav_profile"
+        android:title="@string/h_bnav_profile_title"
+        android:icon="@drawable/h_bnav_profile_icon"
+        />
+
+</menu>

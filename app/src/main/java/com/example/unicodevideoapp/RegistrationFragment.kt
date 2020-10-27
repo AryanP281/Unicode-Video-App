@@ -31,6 +31,7 @@ class RegistrationFragment : Fragment()
 
     private lateinit var firebaseAuth : FirebaseAuth //Used for user authorization with firebase
     private var showingPassword : Boolean = false //Tells whether the show password button has ben clicked and the password is being shown
+    //private lateinit var firebaseDb : DatabaseReference //Reference to the firebase realtime database
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -48,6 +49,9 @@ class RegistrationFragment : Fragment()
         //Setting click listener for the show password button
         val showPasswordBtn : ImageButton = fragmentView.findViewById<ImageButton>(R.id.registration_show_password_btn)
         showPasswordBtn.setOnClickListener {view : View -> tooglePasswordVisibility(showPasswordBtn) }
+
+        //Initializing the database reference
+        //firebaseDb = FirebaseDatabase.getInstance().reference
 
         return fragmentView
     }
@@ -70,23 +74,18 @@ class RegistrationFragment : Fragment()
                     //Checking if the user was successfully registered
                     if(task.isSuccessful)
                     {
-                        //Saving the username
-                        val profileUpdates  = UserProfileChangeRequest.Builder().let {
-                            it.setDisplayName(username) //Setting the user display name
-                        }
-                        firebaseAuth.currentUser!!.updateProfile(profileUpdates.build()).let{
-                            it.addOnCompleteListener {task : Task<Void> ->
+                        /*//Adding user to database
+                        val newUser : User = User(email, username)
+                        firebaseDb.child("USERS").child(newUser.email).setValue(newUser).addOnCompleteListener{task : Task<Void> ->
+                            //Showing error message
+                            if(!task.isSuccessful) Toast.makeText(activity, "Failed to add user to database - ${task.exception?.message}", Toast.LENGTH_SHORT).show()
 
-                                if(!task.isSuccessful)
-                                    Toast.makeText(activity, "Unable to set username. Try again.", Toast.LENGTH_SHORT).show()
+                            //Switching to home activity
+                            val intent : Intent = Intent(activity, HomeActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
 
-                                //Displaying home activity
-                                val intent : Intent = Intent(activity, HomeActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-
-                            }
-                        } //Updating username in Firebase
+                        } //Writing to database*/
                     }
                     else
                         Toast.makeText(activity, "Registration failed - ${task.exception?.message}", Toast.LENGTH_SHORT).show()

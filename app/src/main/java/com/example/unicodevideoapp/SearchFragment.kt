@@ -64,9 +64,14 @@ class SearchFragment : Fragment()
             val imageView : ImageView = holder.cardView.findViewById<ImageView>(R.id.video_card_thumbnail)
             imageView.setImageResource(R.drawable.thumbnail_failure_icon) //Default icon
             ThumbnailRetriever(imageView).let {
-                it.execute(videos.get(position).snippet.thumbnails.medium.url)
+                it.execute(videos.get(position).snippet.thumbnails.high.url)
             }
 
+            //Setting the video id as tag on the card view
+            holder.cardView.setTag(videos.get(position).id.videoId)
+
+            //Setting click listener for the card
+            holder.cardView.setOnClickListener(videoCardClickListener)
         }
 
         override fun getItemCount(): Int
@@ -140,6 +145,16 @@ class SearchFragment : Fragment()
         }
     }
 
+    val videoCardClickListener : View.OnClickListener = object:View.OnClickListener
+    {
+        override fun onClick(v: View?)
+        {
+            //Playing the selected video
+            val videoTitle : String = v!!.findViewById<RelativeLayout>(R.id.video_card_rel_layout).findViewById<TextView>(R.id.video_card_title).text.toString()
+            (activity as HomeActivity).playVideo(v!!.getTag().toString(), videoTitle)
+        }
+    }
+
     private lateinit var keyword : String //The entered search query
     private lateinit var recyclerAdapter: RecyclerAdapter
     private var nextPageToken : String? = null //The token for the next search result page
@@ -190,9 +205,10 @@ class SearchFragment : Fragment()
         val queryMap : HashMap<String, String> = HashMap<String,String>()
         queryMap.put("part", "snippet")
         queryMap.put("q", keyword)
+        queryMap.put("type", "video")
         queryMap.put("maxResults", "50")
         if(nextPageToken != null) queryMap.put("pageToken", nextPageToken!!)
-        queryMap.put("fields", "items(snippet),nextPageToken")
+        queryMap.put("fields", "items(id(videoId),snippet),nextPageToken")
         queryMap.put("key", YOUTUBE_API_KEY)
 
         //Initializing the api call

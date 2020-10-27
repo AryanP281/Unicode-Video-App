@@ -7,6 +7,7 @@
     >
 
     <RelativeLayout
+        android:id="@+id/video_card_rel_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -14,7 +15,29 @@
         android:background="@drawable/video_card_bg_shape"
         >
 
+        <ImageView
+            android:id="@+id/video_card_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            />
+
         <TextView
+            android:id="@+id/video_card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/video_card_thumbnail"
+            android:textSize="20sp"
+            android:maxLength="50"
+            />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
+
+<!--
+<TextView
             android:id="@+id/video_card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +52,4 @@
             android:layout_below="@+id/video_card_title"
             android:layout_marginTop="2dp"
             />
-
-    </RelativeLayout>
-
-</androidx.cardview.widget.CardView>
+-->

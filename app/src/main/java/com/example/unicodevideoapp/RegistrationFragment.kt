@@ -14,7 +14,9 @@ import android.widget.ImageButton
 import android.widget.Toast
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
-import java.lang.Exception
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class RegistrationFragment : Fragment()
@@ -31,7 +33,7 @@ class RegistrationFragment : Fragment()
 
     private lateinit var firebaseAuth : FirebaseAuth //Used for user authorization with firebase
     private var showingPassword : Boolean = false //Tells whether the show password button has ben clicked and the password is being shown
-    //private lateinit var firebaseDb : DatabaseReference //Reference to the firebase realtime database
+    private lateinit var firestoreDb : FirebaseFirestore //The firebase firestore db object
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -51,7 +53,7 @@ class RegistrationFragment : Fragment()
         showPasswordBtn.setOnClickListener {view : View -> tooglePasswordVisibility(showPasswordBtn) }
 
         //Initializing the database reference
-        //firebaseDb = FirebaseDatabase.getInstance().reference
+        firestoreDb = Firebase.firestore
 
         return fragmentView
     }
@@ -74,18 +76,19 @@ class RegistrationFragment : Fragment()
                     //Checking if the user was successfully registered
                     if(task.isSuccessful)
                     {
-                        /*//Adding user to database
-                        val newUser : User = User(email, username)
-                        firebaseDb.child("USERS").child(newUser.email).setValue(newUser).addOnCompleteListener{task : Task<Void> ->
-                            //Showing error message
-                            if(!task.isSuccessful) Toast.makeText(activity, "Failed to add user to database - ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        //Adding user to database
+                        val newUser : User = User(email, username,-1,-1,-1,-1) //Creating the new user
+
+                        firestoreDb.collection("users").document(email).set(newUser).addOnCompleteListener { task : Task<Void> ->
+                            //Checking if database write was successful
+                            if(!task.isSuccessful)
+                                Toast.makeText(activity, "Unable to save user details in database", Toast.LENGTH_SHORT).show()
 
                             //Switching to home activity
-                            val intent : Intent = Intent(activity, HomeActivity::class.java)
+                            val intent : Intent = Intent(context, HomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
-
-                        } //Writing to database*/
+                        }
                     }
                     else
                         Toast.makeText(activity, "Registration failed - ${task.exception?.message}", Toast.LENGTH_SHORT).show()

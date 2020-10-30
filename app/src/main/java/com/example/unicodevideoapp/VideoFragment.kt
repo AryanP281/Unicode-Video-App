@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.SparseArray
 import androidx.fragment.app.Fragment
@@ -27,6 +28,9 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.isVisible
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.firebase.auth.FirebaseAuth
 
 
 class VideoFragment : Fragment()
@@ -40,19 +44,6 @@ class VideoFragment : Fragment()
             return VideoFragment()
         }
     }
-
-    val toolbarClickListener : Toolbar.OnMenuItemClickListener = object:Toolbar.OnMenuItemClickListener
-    {
-        override fun onMenuItemClick(item: MenuItem?): Boolean
-        {
-            when(item?.itemId)
-            {
-                R.id.download_video -> manageStoragePermissions()
-            }
-
-            return true
-        }
-    } //The click listener for the utility toolbar
 
     private lateinit var exoplayer : SimpleExoPlayer //The exoplayer
     private lateinit var playerView : PlayerView //The player view
@@ -68,7 +59,16 @@ class VideoFragment : Fragment()
         val fragmentView : View = inflater.inflate(R.layout.fragment_video, container, false)
 
         //Setting the video title
-        fragmentView.findViewById<TextView>(R.id.video_title)?.text = (activity as HomeActivity).videoTitle
+        if(!(activity as HomeActivity).playDownloadedVideo)
+            fragmentView.findViewById<TextView>(R.id.video_title)?.text = (activity as HomeActivity).videoTitle
+        else
+        {
+            fragmentView.findViewById<TextView>(R.id.video_title)?.text = (activity as HomeActivity).downloadedVideo!!.title
+
+            //Disabling the download button
+            val downloadBtn : Button? = fragmentView.findViewById<Button>(R.id.download_video_btn)
+            downloadBtn?.visibility = View.GONE
+        }
 
         //Getting the player view
         playerView = fragmentView.findViewById<PlayerView>(R.id.video_player)
@@ -81,10 +81,11 @@ class VideoFragment : Fragment()
                 activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
-        //Initializing the toolbar
-        val toolbar : Toolbar? = fragmentView.findViewById<Toolbar>(R.id.video_toolbar) //Getting the toolbar
-        toolbar?.inflateMenu(R.menu.video_toolbar_menu) //Inflating the toolbar menu
-        toolbar?.setOnMenuItemClickListener(toolbarClickListener) //Setting the click listener
+        //Setting click listener for download button
+        fragmentView.findViewById<Button>(R.id.download_video_btn)?.setOnClickListener { v : View ->
+            if(!(activity as HomeActivity).playDownloadedVideo)
+                manageStoragePermissions()
+        }
 
         //Getting state
         if(savedInstanceState != null) {
@@ -149,43 +150,11 @@ class VideoFragment : Fragment()
 
         exoplayer.playWhenReady = true
 
-        if(decodedUrl == null)
-        {
-            //Extracting youtube url
-            val youtubeExtractor = @SuppressLint("StaticFieldLeak")
-            object:YouTubeExtractor(context!!)
-            {
-                    override fun onExtractionComplete(ytFiles: SparseArray<YtFile>?, videoMeta: VideoMeta?)
-                    {
-                        if(ytFiles != null)
-                        {
-                            var iTag : Int = 0
-                            for(i in 0..ytFiles.size())
-                            {
-                                iTag = ytFiles.keyAt(i)
-                                if(ytFiles.get(iTag) != null)
-                                {
-                                    decodedUrl = ytFiles.get(iTag).url
-                                    break
-                                }
-                            }
-                            exoplayer.prepare(ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(decodedUrl))) //Creating and setting the media source
-                            exoplayer.seekTo(playbackPos)
-                        }
-                    }
-
-                }
-
-            //Building the data source
-            val videoUrl : String = "https://www.youtube.com/watch?v=${(activity as HomeActivity).videoId}" //Creating the youtube url
-            youtubeExtractor.extract(videoUrl,true,true) //Extracting usable url and preparing to play video
-        }
+        //Determining the playback mode
+        if((activity as HomeActivity).playDownloadedVideo)
+            playDownloadedVideo()
         else
-        {
-            exoplayer.prepare(ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(decodedUrl))) //Creating and setting the media source
-            exoplayer.seekTo(playbackPos)
-        }
-
+            playYoutubeVideo()
     }
 
     private fun manageStoragePermissions()
@@ -209,9 +178,66 @@ class VideoFragment : Fragment()
             downloadVideo()
     }
 
+    private fun playYoutubeVideo()
+    {
+        if(decodedUrl == null)
+        {
+            //Extracting youtube url
+            val youtubeExtractor = @SuppressLint("StaticFieldLeak")
+            object:YouTubeExtractor(context!!)
+            {
+                override fun onExtractionComplete(ytFiles: SparseArray<YtFile>?, videoMeta: VideoMeta?)
+                {
+                    if(ytFiles != null)
+                    {
+                        var iTag : Int = 0
+                        for(i in 0..ytFiles.size())
+                        {
+                            iTag = ytFiles.keyAt(i)
+                            if(ytFiles.get(iTag) != null)
+                            {
+                                decodedUrl = ytFiles.get(iTag).url
+                                break
+                            }
+                        }
+                        exoplayer.prepare(ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(decodedUrl))) //Creating and setting the media source
+                        exoplayer.seekTo(playbackPos)
+                    }
+                }
+
+            }
+
+            //Building the data source
+            val videoUrl : String = "https://www.youtube.com/watch?v=${(activity as HomeActivity).videoId}" //Creating the youtube url
+            youtubeExtractor.extract(videoUrl,true,true) //Extracting usable url and preparing to play video
+        }
+        else
+        {
+            exoplayer.prepare(ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(decodedUrl))) //Creating and setting the media source
+            exoplayer.seekTo(playbackPos)
+        }
+    }
+
+    private fun playDownloadedVideo()
+    {
+        //Initializing the media source
+        val mediaSource : MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource((activity as HomeActivity).downloadedVideo!!.uri)
+        exoplayer.prepare(mediaSource)
+        exoplayer.seekTo(playbackPos)
+    }
+
     private fun downloadVideo()
     {
-        val videoDownloader : VideoDownloader = VideoDownloader(context!!, (activity as HomeActivity).videoTitle) //The downloader to be used for downloading the video
+
+        //Getting the user handle
+        var userHandle : String = ""
+        val firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
+        if(firebaseAuth.currentUser!!.email!!.isBlank())
+            userHandle = firebaseAuth.currentUser!!.phoneNumber!!
+        else
+            userHandle = firebaseAuth.currentUser!!.email!!
+
+        val videoDownloader : VideoDownloader = VideoDownloader(context!!, (activity as HomeActivity).videoTitle, userHandle) //The downloader to be used for downloading the video
 
         //Initializing the url extractor
         if(decodedUrl == null)
@@ -239,6 +265,8 @@ class VideoFragment : Fragment()
         else
             videoDownloader.execute(decodedUrl)
 
+        //Showing download start message
+        Toast.makeText(context, "Downloaded started", Toast.LENGTH_SHORT).show()
     }
 
 }

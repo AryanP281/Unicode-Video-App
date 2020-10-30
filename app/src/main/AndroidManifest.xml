@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity"
+            android:configChanges="orientation"
             android:theme="@style/HomeActivity"/>
     </application>
 

@@ -9,8 +9,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
@@ -133,10 +136,20 @@ class PhoneAuthenticationActivity : AppCompatActivity() {
 
         firebaseAuth.signInWithCredential(credential).let {
             it.addOnSuccessListener {res : AuthResult ->
-                //Switching to home activity
-                val intent : Intent = Intent(this, HomeActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+
+                //Updating the database
+                val newUser : User = User(phoneNumField?.text.toString(),"",-1,-1,-1,-1)
+                Firebase.firestore.collection("users").document(newUser.handle).set(newUser).addOnCompleteListener { task : Task<Void> ->
+
+                    //Showing failure message
+                    if(!task.isSuccessful)
+                        Toast.makeText(this, "Failed to add user to database", Toast.LENGTH_SHORT).show()
+
+                    //Switching to home activity
+                    val intent : Intent = Intent(this, HomeActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
             }
 
             it.addOnFailureListener {exe : Exception ->

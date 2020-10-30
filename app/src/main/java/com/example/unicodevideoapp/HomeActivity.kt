@@ -1,6 +1,7 @@
 package com.example.unicodevideoapp
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -10,6 +11,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
@@ -34,6 +36,7 @@ class HomeActivity : AppCompatActivity()
                 R.id.h_bnav_search -> displayFragment(SearchFragment(), false)
                 R.id.h_bnav_watch -> displayFragment(VideoFragment(), false)
                 R.id.h_bnav_profile -> displayFragment(UserProfileFragment(), false)
+                R.id.h_bnav_downloaded_vids -> displayFragment(DownloadedVidsFragment(), false)
             }
             return true
         }
@@ -44,6 +47,9 @@ class HomeActivity : AppCompatActivity()
     var videoTitle : String = "" //The title of the video being played
     var fragId : Int = 0 //The currently displayed fragment
     private var bottomNavBar : BottomNavigationView? = null //The bottom navigation bar
+
+    var playDownloadedVideo : Boolean = false
+    var downloadedVideo : DownloadedVideo? = null //The downloaded video to be played
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -57,14 +63,23 @@ class HomeActivity : AppCompatActivity()
             bottomNavBar!!.setOnNavigationItemSelectedListener(bottomNavClickListener) //Setting the item selected listener
         }
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         //Checking for saved state
         if(savedInstanceState != null)
         {
-            //Getting the video id
-            videoId = savedInstanceState.getString(VIDEO_ID_KEY)!!
+            //Getting the mode
+            playDownloadedVideo = savedInstanceState.getBoolean("MODE")
 
-            //Getting the video title
-            videoTitle = savedInstanceState.getString("VIDEO_TITLE")!!
+            //Getting the video details
+            if(!playDownloadedVideo)
+            {
+                videoId = savedInstanceState.getString(VIDEO_ID_KEY)!!
+                videoTitle = savedInstanceState.getString("VIDEO_TITLE")!!
+            }
+            else
+                downloadedVideo = DownloadedVideo(savedInstanceState.getString("VIDEO_TITLE")!!, Uri.parse(savedInstanceState.getString(VIDEO_ID_KEY)!!))
+
 
             //Getting the fragment id
             fragId = savedInstanceState.getInt("FRAG_ID")
@@ -79,11 +94,26 @@ class HomeActivity : AppCompatActivity()
     {
         super.onSaveInstanceState(outState)
 
-        //Saving the currently played video id
-        outState.putString(VIDEO_ID_KEY, videoId)
+        //Saving the mode
+        outState.putBoolean("MODE", playDownloadedVideo)
 
+        var id : String = ""
+        var title : String = ""
+        if(!playDownloadedVideo)
+        {
+            id = videoId
+            title = videoTitle
+        }
+        else
+        {
+            id = downloadedVideo!!.uri.toString()
+            title = downloadedVideo!!.title
+        }
+
+        //Saving the currently played video id
+        outState.putString(VIDEO_ID_KEY, id)
         //Saving the video title
-        outState.putString("VIDEO_TITLE", videoTitle)
+        outState.putString("VIDEO_TITLE", title)
 
         //Saving the current fragment
         outState.putInt("FRAG_ID", fragId)
@@ -111,6 +141,23 @@ class HomeActivity : AppCompatActivity()
         //Setting the video id
         this.videoId = videoId
         this.videoTitle = videoTitle
+
+        //Setting the flag
+        playDownloadedVideo = false
+
+        //Changing to video fragment
+        bottomNavBar?.selectedItemId = R.id.h_bnav_watch
+    }
+
+    fun playDownloadedVideo(video : DownloadedVideo)
+    {
+        /**Plays the given downloaded video**/
+
+        //Setting the video to be played
+        downloadedVideo = video
+
+        //Setting the flag
+        playDownloadedVideo = true
 
         //Changing to video fragment
         bottomNavBar?.selectedItemId = R.id.h_bnav_watch

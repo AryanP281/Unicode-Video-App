@@ -18,6 +18,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 
 class LoginFragment : Fragment()
@@ -36,7 +39,7 @@ class LoginFragment : Fragment()
 
     private lateinit var firebaseAuth : FirebaseAuth //The firebase auth
     private var showingPassword : Boolean = false //Tells whether the show password button has ben clicked and the password is being shown
-
+    private lateinit var firestoreDb : FirebaseFirestore //The firestore database
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -45,6 +48,9 @@ class LoginFragment : Fragment()
 
         //Initializing the firebase auth
         firebaseAuth = FirebaseAuth.getInstance()
+
+        //Initializing the firestore database
+        firestoreDb = Firebase.firestore
 
         //Setting the click listener for login button
         fragmentView.findViewById<Button>(R.id.login_btn).setOnClickListener {
@@ -268,9 +274,17 @@ class LoginFragment : Fragment()
             it.addOnCompleteListener { task : Task<AuthResult> ->
                 if(task.isSuccessful)
                 {
-                    //Switching to home activity
-                    val intent : Intent = Intent(activity, HomeActivity::class.java)
-                    startActivity(intent)
+                    //Adding user to database
+                    val newUser : User = User(firebaseAuth.currentUser!!.email.toString(), "", -1, -1, -1, -1)
+                    firestoreDb.collection("users").document(newUser.handle).set(newUser).addOnCompleteListener {task : Task<Void> ->
+                        //Showing error message
+                        if(!task.isSuccessful)
+                            Toast.makeText(context, "Failed to add user to database", Toast.LENGTH_SHORT).show()
+
+                        //Switching to home activity
+                        val intent : Intent = Intent(context, HomeActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
                 else
                     Toast.makeText(activity, "Login Failed - ${task.exception!!.message}", Toast.LENGTH_LONG).show()

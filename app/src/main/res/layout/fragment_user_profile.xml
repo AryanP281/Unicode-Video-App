@@ -1,22 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserProfileFragment">
-
-    <Button
-        android:id="@+id/logout_btn"
-        android:layout_width="wrap_content"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/logout_btn_txt"
-        />
+        android:padding="16dp"
+        tools:context=".UserProfileFragment">
 
-    <TextView
-        android:id="@+id/user_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <LinearLayout
+            android:id="@+id/userdp_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
 
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/user_dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/default_dp_icon"
+                />
+
+            <Button
+                android:id="@+id/dp_change_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="@string/change_dp_btn_txt"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/username_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_below="@id/userdp_ui"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/username_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username_label_text"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/username_textbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:textSize="24sp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/userhandle_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/username_ui"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/handle_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/userhandle_label_text"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_weight="1"
+                android:textSize="24sp"
+                />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/bdate_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userhandle_ui"
+            android:layout_marginTop="16dp"
+            >
+
+            <TextView
+                android:id="@+id/bdate_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/userbdate_label_text"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/user_bday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_below="@id/bdate_label"
+                android:layout_marginTop="4dp"
+                android:entries="@array/days"
+                />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/user_bmonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/user_bday"
+                android:layout_toRightOf="@id/user_bday"
+                android:layout_marginLeft="4dp"
+                android:entries="@array/monthsOfYear"
+                />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/user_bYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/user_bday"
+                android:layout_toRightOf="@id/user_bmonth"
+                android:layout_marginLeft="4dp"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/country_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bdate_ui"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/country_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_country_label_text"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/user_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/btns_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/country_ui"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            >
+
+            <View
+                android:id="@+id/user_profile_btn_partition"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                />
+
+            <Button
+                android:id="@+id/logout_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/user_profile_btn_partition"
+                android:layout_marginRight="16dp"
+                android:text="@string/logout_btn_txt"
+                />
+
+            <Button
+                android:id="@+id/save_profile_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/user_profile_btn_partition"
+                android:layout_marginLeft="16dp"
+                android:text="@string/save_profile_btn_text"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>

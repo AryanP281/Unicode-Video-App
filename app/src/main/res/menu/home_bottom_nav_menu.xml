@@ -25,4 +25,10 @@
         android:icon="@drawable/download_icon"
         />
 
+    <item
+        android:id="@+id/h_bnav_fav_vids"
+        android:title="@string/h_bnav_fav_vids_title"
+        android:icon="@drawable/fav_icon"
+        />
+
 </menu>

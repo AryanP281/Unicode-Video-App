@@ -30,7 +30,14 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.isVisible
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class VideoFragment : Fragment()
@@ -53,10 +60,22 @@ class VideoFragment : Fragment()
     private var playbackPos : Long = 0 //The current position of the playback
     private var decodedUrl : String? = null //The decoded dash url
 
+    private var userHandle : String? = null //The user handle
+    private lateinit var firestoreDb : FirebaseFirestore //The firestore db object
+    private var isFavourite : Boolean = false //Tells whether the current video has already been marked favourite
+    private var favBtn : ImageButton? = null //The button used to mark video as favourite
+    private lateinit var dbRecordId : String //The id of the video's record in the favourites database
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         // Inflate the layout for this fragment
         val fragmentView : View = inflater.inflate(R.layout.fragment_video, container, false)
+
+        //Initializing the firestore object
+        firestoreDb = Firebase.firestore
+
+        //Getting the user handle
+        getUserHandle()
 
         //Setting the video title
         if(!(activity as HomeActivity).playDownloadedVideo)
@@ -82,7 +101,7 @@ class VideoFragment : Fragment()
         }
 
         //Setting click listener for download button
-        fragmentView.findViewById<Button>(R.id.download_video_btn)?.setOnClickListener { v : View ->
+        fragmentView.findViewById<ImageButton>(R.id.download_video_btn)?.setOnClickListener { v : View ->
             if(!(activity as HomeActivity).playDownloadedVideo)
                 manageStoragePermissions()
         }
@@ -94,6 +113,15 @@ class VideoFragment : Fragment()
 
             //Getting the decoded url
             decodedUrl = savedInstanceState.getString("DECODED_URL")
+
+            //Getting if video has already been marked favourite
+            isFavourite = savedInstanceState.getBoolean("FAV")
+            updateFavBtnUI(fragmentView) //Updating the button icon
+        }
+        else
+        {
+            //Checking if the video has been marked favourite
+            checkIfFavourite(fragmentView)
         }
 
         return fragmentView
@@ -122,6 +150,9 @@ class VideoFragment : Fragment()
 
         //Saving the decoded url
         outState.putString("DECODED_URL", decodedUrl)
+
+        //Saving the fav status
+        outState.putBoolean("FAV", isFavourite)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
@@ -269,4 +300,113 @@ class VideoFragment : Fragment()
         Toast.makeText(context, "Downloaded started", Toast.LENGTH_SHORT).show()
     }
 
+    private fun toggleFavourite()
+    {
+        //Getting the user handle
+        if(userHandle == null) getUserHandle()
+
+        if(!isFavourite)
+            markAsFavourite()
+        else
+            removeFromFavourites()
+    }
+
+    private fun markAsFavourite()
+    {
+        /**Adds the current video to the database**/
+
+        //Initializing the data to be added
+        val data: HashMap<String, String?> =
+            hashMapOf("user" to userHandle, "videoId" to (activity as HomeActivity).videoId)
+
+        //Adding video to db
+        firestoreDb.collection("favs").add(data)
+            .addOnCompleteListener { task: Task<DocumentReference> ->
+                if (task.isSuccessful)
+                {
+                    //Setting the flag
+                    isFavourite = true
+
+                    //Saving the document id
+                    dbRecordId = task.result!!.id
+
+                    //Updating the ui
+                    updateFavBtnUI(view!!)
+
+                } else
+                    Toast.makeText(context, "Failed to mark favourite", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun removeFromFavourites()
+    {
+        /**Removes the current video from the database**/
+
+        firestoreDb.collection("favs").document(dbRecordId).delete().addOnCompleteListener { task : Task<Void> ->
+            if(task.isSuccessful)
+            {
+                //Setting the flag
+                isFavourite = false
+
+                //Updating the ui
+                updateFavBtnUI(view!!)
+            }
+            else
+                Toast.makeText(context, "Failed to remove from favourite", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getUserHandle()
+    {
+        val auth : FirebaseAuth = FirebaseAuth.getInstance()
+        if(auth.currentUser!!.email == null || auth.currentUser!!.email!!.isBlank())
+            userHandle = auth.currentUser!!.phoneNumber
+        else
+            userHandle = auth.currentUser!!.email
+    }
+
+    private fun checkIfFavourite(fragmentView : View)
+    {
+        /**Checks if the current video has already been marked as favourite**/
+
+        //Creating the query
+        val query : Query = firestoreDb.collection("favs").whereEqualTo("user",userHandle).whereEqualTo("videoId", (activity as HomeActivity).videoId)
+
+        query.get().addOnCompleteListener { task :Task<QuerySnapshot> ->
+                if(task.isSuccessful)
+                {
+
+                    //Checking if doc exists i.e video is already marked favourite
+                    if (!task.result!!.isEmpty)
+                    {
+                        isFavourite = true //Setting the flag
+
+                        //Saving the document id
+                        dbRecordId = task.result!!.documents.get(0).id
+                    }
+
+                    //Setting the click listener
+                    updateFavBtnUI(fragmentView)
+                    favBtn!!.setOnClickListener { v : View ->
+                        toggleFavourite()
+                    }
+                }
+        }
+    }
+
+    private fun updateFavBtnUI(view : View)
+    {
+        /**Updates the icon for the favourites button**/
+
+        //Initializing the button
+        if(favBtn == null)
+            favBtn = view.findViewById(R.id.favourite_video_btn)
+
+        if(favBtn == null) return
+
+        if(isFavourite)
+            favBtn!!.setImageResource(R.drawable.fav_icon)
+        else
+            favBtn!!.setImageResource(R.drawable.not_fav_icon)
+    }
 }

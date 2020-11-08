@@ -1,5 +1,7 @@
 package com.example.unicodevideoapp
 
+import com.google.gson.annotations.SerializedName
+
 class VideoItem
 {
     class VideoItemId
@@ -35,5 +37,4 @@ class VideoItem
 
     lateinit var id : VideoItemId
     lateinit var snippet : VideoItemSnippet
-
 }

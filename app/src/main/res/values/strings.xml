@@ -22,6 +22,7 @@
     <string name="h_bnav_video_title">Watch</string>
     <string name="h_bnav_profile_title">Profile</string>
     <string name="h_bnav_downloaded_vids_title">Downloads</string>
+    <string name="h_bnav_fav_vids_title">Favourites</string>
     <string name="storage_perm_rat_title">External Storage Write Permission</string>
     <string name="storage_perm_rat_msg">The app requires permission to save downloaded video</string>
     <string name="accept_perm_btn_msg">Accept</string>
@@ -35,4 +36,5 @@
     <string name="storage_read_perm_rat_msg">The app requires permission to select image from gallery</string>
     <string name="downloaded_vids_perm_rat_msg">The app needs to access downloaded videos</string>
     <string name="download_video_btn_txt">Download Video</string>
+    <string name="favourite_video_btn_txt">Mark Favourite</string>
 </resources>

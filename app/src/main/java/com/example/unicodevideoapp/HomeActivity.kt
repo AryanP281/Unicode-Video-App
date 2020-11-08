@@ -37,6 +37,7 @@ class HomeActivity : AppCompatActivity()
                 R.id.h_bnav_watch -> displayFragment(VideoFragment(), false)
                 R.id.h_bnav_profile -> displayFragment(UserProfileFragment(), false)
                 R.id.h_bnav_downloaded_vids -> displayFragment(DownloadedVidsFragment(), false)
+                R.id.h_bnav_fav_vids -> displayFragment(FavouriteVidsFragment(), false)
             }
             return true
         }
@@ -124,7 +125,9 @@ class HomeActivity : AppCompatActivity()
         //Updating the fragment id
         if(frag is SearchFragment) fragId = R.id.h_bnav_search
         else if (frag is VideoFragment) fragId = R.id.h_bnav_watch
-        else fragId = R.id.h_bnav_profile
+        else if(frag is UserProfileFragment) fragId = R.id.h_bnav_profile
+        else if(frag is DownloadedVidsFragment) fragId = R.id.h_bnav_downloaded_vids
+        else if(frag is FavouriteVidsFragment) fragId = R.id.h_bnav_fav_vids
 
         //Starting the fragment change transaction
         val fragTrans : FragmentTransaction = supportFragmentManager.beginTransaction()

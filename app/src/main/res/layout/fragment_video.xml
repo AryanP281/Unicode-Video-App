@@ -22,14 +22,28 @@
         app:controller_layout_id="@layout/exoplayer_custom_controls"
         />
 
-    <Button
+    <ImageButton
         android:id="@+id/download_video_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/video_player"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
         android:layout_centerHorizontal="true"
-        android:text="@string/download_video_btn_txt"
+        android:src="@drawable/download_icon"
+        android:background="@android:color/transparent"
+        />
+
+    <ImageButton
+        android:id="@+id/favourite_video_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/download_video_btn"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/not_fav_icon"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="8dp"
         />
 
 </RelativeLayout>
